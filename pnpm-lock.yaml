@@ -36,15 +36,15 @@ importers:
       '@repo/common':
         specifier: workspace:*
         version: link:../../packages/common
+      '@repo/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
-      db:
-        specifier: workspace:*
-        version: link:../../packages/db
 
   apps/web:
     dependencies:

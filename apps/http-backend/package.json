@@ -17,7 +17,7 @@
     "@types/express": "^5.0.0",
     "@repo/backend-common": "workspace:*",
     "@repo/common": "workspace:*",
-    "db":"workspace:*"
+    "@repo/db":"workspace:*"
 
   },
   "keywords": [],
