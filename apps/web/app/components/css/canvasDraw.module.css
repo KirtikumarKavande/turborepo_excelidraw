@@ -1,0 +1,14 @@
+.overlayCanvas {
+  position: absolute;
+  z-index: 2;
+  background-color: transparent;
+  cursor: crosshair;
+}
+.mainCanvas {
+  position: absolute;
+  cursor: crosshair;
+  z-index: 1;
+
+}
+
+
