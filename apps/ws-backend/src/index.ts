@@ -1,30 +1,35 @@
-import { WebSocketServer } from 'ws';
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { JWT_SECRET } from '@repo/backend-common/config';
+import { createServer } from "http";
+import { Server, Socket } from "socket.io";
+import express from "express";
+import cors from "cors";
 
-const wss = new WebSocketServer({ port: 8080 });
+const app = express();
+app.use(cors());
 
-wss.on('connection', function connection(ws, request) {
-  const url = request.url;
-  if (!url) {
-    return;
-  }
-  const queryParams = new URLSearchParams(url.split('?')[1]);
-  const token = queryParams.get('token') || "";
-  const decoded = jwt.verify(token, JWT_SECRET);
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
-  if (typeof decoded == "string") {
-    ws.close();
-    return;
-  }
+io.on("connection", (socket: Socket) => {
+  console.log("A user connected", socket.rooms);
+  socket.join("group1");
+  console.log(socket.rooms);
 
-  if (!decoded || !decoded.userId) {
-    ws.close();
-    return;
-  }
-
-  ws.on('message', function message(data) {
-    ws.send('pong');
+  socket.on("join-room", (msg: string) => {
+    console.log("Message:", msg);
+    io.emit("chat message", msg);
   });
 
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
+
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`WebSocket server running at http://localhost:${PORT}`);
 });
