@@ -2,7 +2,13 @@ import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import express from "express";
 import cors from "cors";
-
+type draw = {
+  shape: string;
+  x: number;
+  y: number;
+  height: number;
+  roomId: string;
+};
 const app = express();
 app.use(cors());
 
@@ -15,14 +21,15 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket: Socket) => {
-  console.log("A user connected", socket.rooms);
-  socket.join("group1");
-  console.log(socket.rooms);
-
-  socket.on("join-room", (msg: string) => {
-    console.log("Message:", msg);
-    io.emit("chat message", msg);
+  console.log("A user connected");
+  socket.on("join-room", (room:string) => {
+    console.log(room);
+    socket.join(room);
   });
+
+   socket.on("draw", (drawOnCanvas:draw) => {
+    console.log(drawOnCanvas);
+  })
 
   socket.on("disconnect", () => {
     console.log("A user disconnected");

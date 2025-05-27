@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../components/css/canvasDraw.module.css";
+import { io, socket } from "../utility/socket";
 
 const CanvasDraw = () => {
   const mainCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -13,6 +14,7 @@ const CanvasDraw = () => {
   });
 
   useEffect(() => {
+    socket.emit('join-room',"myRoom1")
     setWindowSize({
       width: window.innerWidth - 5,
       height: window.innerHeight - 10,
@@ -62,6 +64,21 @@ const CanvasDraw = () => {
         if (!main) return;
         main.strokeStyle = "white";
         main.strokeRect(x, y, width, height);
+
+        socket.emit("draw", {
+          shape: "rectangle",
+          x,
+          y,
+          height,
+          width,
+        });
+
+        /*
+        {
+        shape:rectangle,
+        x,y,height,width,
+        }
+        */
         overlay.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
       });
     }
