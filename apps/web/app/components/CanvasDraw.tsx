@@ -5,23 +5,32 @@ import styles from "../components/css/canvasDraw.module.css";
 const CanvasDraw = () => {
   const mainCanvasRef = useRef<HTMLCanvasElement>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [isClient, setIsClient] = useState(false);
 
   const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth - 5,
-    height: window.innerHeight - 10,
+    width: 0,
+    height: 0,
   });
 
   useEffect(() => {
+    setWindowSize({
+      width: window.innerWidth - 5,
+      height: window.innerHeight - 10,
+    });
+    setIsClient(true);
+
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth - 5,
         height: window.innerHeight - 10,
       });
     };
+    window.addEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
     const overlayCanvas = overlayCanvasRef.current;
     const mainCanvas = mainCanvasRef.current;
-
-    window.addEventListener("resize", handleResize);
     if (overlayCanvas && mainCanvas) {
       const overlay = overlayCanvas.getContext("2d");
       const main = mainCanvas.getContext("2d");
@@ -56,8 +65,11 @@ const CanvasDraw = () => {
         overlay.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
       });
     }
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [isClient]);
+
+  if (!isClient) {
+    return <div>loading.....</div>;
+  }
 
   return (
     <div>
