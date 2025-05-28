@@ -70,6 +70,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@repo/ts-types':
+        specifier: workspace:*
+        version: link:../../packages/ts-types
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -113,6 +116,9 @@ importers:
       '@repo/backend-common':
         specifier: workspace:*
         version: link:../../packages/backend-common
+      '@repo/ts-types':
+        specifier: workspace:*
+        version: link:../../packages/ts-types
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -188,6 +194,8 @@ importers:
       typescript-eslint:
         specifier: ^8.15.0
         version: 8.15.0(eslint@9.15.0)(typescript@5.5.4)
+
+  packages/ts-types: {}
 
   packages/typescript-config: {}
 

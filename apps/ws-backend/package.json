@@ -19,7 +19,8 @@
   "devDependencies": {
     "@repo/backend-common": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/ws": "^8.5.13"
+    "@types/ws": "^8.5.13",
+    "@repo/ts-types":"workspace:*"
   },
   "keywords": [],
   "author": "",

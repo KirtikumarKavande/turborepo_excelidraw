@@ -2,13 +2,8 @@ import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import express from "express";
 import cors from "cors";
-type draw = {
-  shape: string;
-  x: number;
-  y: number;
-  height: number;
-  roomId: string;
-};
+import { draw } from "@repo/ts-types/draw";
+
 const app = express();
 app.use(cors());
 
@@ -22,14 +17,15 @@ const io = new Server(server, {
 
 io.on("connection", (socket: Socket) => {
   console.log("A user connected");
-  socket.on("join-room", (room:string) => {
+  socket.on("join-room", (room: string) => {
     console.log(room);
     socket.join(room);
   });
 
-   socket.on("draw", (drawOnCanvas:draw) => {
+  socket.on("draw", (drawOnCanvas: draw) => {
+    io.to(drawOnCanvas.roomId).emit("user-data", drawOnCanvas);
     console.log(drawOnCanvas);
-  })
+  });
 
   socket.on("disconnect", () => {
     console.log("A user disconnected");
