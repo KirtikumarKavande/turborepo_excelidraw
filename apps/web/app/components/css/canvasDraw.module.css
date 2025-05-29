@@ -10,5 +10,20 @@
   z-index: 1;
 
 }
+.btnList{
+ display: flex; 
+ gap: 10px;
+ justify-content: center;
+ margin-top: 10px;
+ position: relative;
+ z-index: 3;
+ 
+}
 
+.drawBtn{
+  padding: 10px;
+  background-color: white;
+  color: black;
+  cursor: pointer;
 
+}

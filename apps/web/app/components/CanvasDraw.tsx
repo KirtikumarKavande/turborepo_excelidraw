@@ -3,17 +3,15 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "../components/css/canvasDraw.module.css";
 import { socket } from "../utility/socket";
 import { draw as drawType } from "@repo/ts-types/draw";
+import useWindowSize from "../hooks/useWindowSize";
 
 const CanvasDraw = () => {
   const mainCanvasRef = useRef<HTMLCanvasElement>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isClient, setIsClient] = useState(false);
   const [draw, setDraw] = useState<any>([]);
-  const [windowSize, setWindowSize] = useState({
-    width: 0,
-    height: 0,
-  });
-
+  const windowSize = useWindowSize();
+  const [selectedBtn, setSelectedBtn] = useState("");
   useEffect(() => {
     const mainCanvas = mainCanvasRef.current;
     if (!mainCanvas) return;
@@ -33,19 +31,7 @@ const CanvasDraw = () => {
     socket.on("user-data", (data: object) => {
       setDraw((prev: drawType[]) => [...prev, data]);
     });
-    setWindowSize({
-      width: window.innerWidth - 5,
-      height: window.innerHeight - 10,
-    });
     setIsClient(true);
-
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth - 5,
-        height: window.innerHeight - 10,
-      });
-    };
-    window.addEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -61,6 +47,8 @@ const CanvasDraw = () => {
       let width = 0;
       let height = 0;
       overlayCanvas.addEventListener("mousedown", (event) => {
+        console.log("hiiiii", selectedBtn);
+
         isMouseDown = true;
         x = event.clientX - overlayCanvas.offsetLeft;
         y = event.clientY - overlayCanvas.offsetTop;
@@ -74,6 +62,14 @@ const CanvasDraw = () => {
           overlay.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
 
           overlay.strokeRect(x, y, width, height);
+          console.log("hiiiii", selectedBtn);
+
+          if (selectedBtn === "circle") {
+            overlay.beginPath();
+            overlay.arc(x, y, Math.max(height, width), 0, 2 * Math.PI);
+            // ctx.arc(95,50,40,0,2*Math.PI);
+            overlay.stroke();
+          }
         }
       });
 
@@ -82,7 +78,12 @@ const CanvasDraw = () => {
         if (!main) return;
         main.strokeStyle = "white";
         main.strokeRect(x, y, width, height);
-
+        if (selectedBtn === "circle") {
+          main.beginPath();
+          main.arc(x, y, Math.max(height, width), 0, 2 * Math.PI);
+          // ctx.arc(95,50,40,0,2*Math.PI);
+          main.stroke();
+        }
         socket.emit("draw", {
           shape: "rectangle",
           x,
@@ -101,7 +102,7 @@ const CanvasDraw = () => {
         overlay.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
       });
     }
-  }, [isClient]);
+  }, [isClient, selectedBtn]);
 
   if (!isClient) {
     return <div>loading.....</div>;
@@ -122,6 +123,16 @@ const CanvasDraw = () => {
           width={windowSize.width}
           height={windowSize.height}
         ></canvas>
+      </div>
+
+      <div className={styles.btnList}>
+        <button
+          className={styles.drawBtn}
+          onClick={() => setSelectedBtn("circle")}
+        >
+          Circle
+        </button>
+        <button className={styles.drawBtn}>Rectangle</button>
       </div>
     </div>
   );

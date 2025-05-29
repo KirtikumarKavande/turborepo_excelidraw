@@ -67,6 +67,9 @@ importers:
         specifier: ^4.8.1
         version: 4.8.1
     devDependencies:
+      '@repo/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -146,6 +149,8 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
 
+  packages/constants: {}
+
   packages/db:
     dependencies:
       '@prisma/client':
@@ -195,7 +200,11 @@ importers:
         specifier: ^8.15.0
         version: 8.15.0(eslint@9.15.0)(typescript@5.5.4)
 
-  packages/ts-types: {}
+  packages/ts-types:
+    devDependencies:
+      '@repo/constants':
+        specifier: workspace:*
+        version: link:../constants
 
   packages/typescript-config: {}
 
