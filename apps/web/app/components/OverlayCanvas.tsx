@@ -4,13 +4,14 @@ import styles from "../components/css/canvasDraw.module.css";
 import { DrawingState } from "../../ts-types/types";
 import CanvasRenderService from "../service/canvasRenderService";
 import { draw } from "@repo/ts-types/draw";
+import { socket } from "../utility/socket";
 
 const OverlayCanvas = ({
   currentShape,
   onDrawComplete,
 }: {
   currentShape: string;
-  onDrawComplete: (dimensions:draw) => void;
+  onDrawComplete: (dimensions: draw) => void;
 }) => {
   const overLayRef = useRef<HTMLCanvasElement>(null);
   const [drawingState, setDrawingState] = useState<DrawingState>({
@@ -20,14 +21,15 @@ const OverlayCanvas = ({
   });
 
   function calculateHeightWidth(event: React.MouseEvent<HTMLCanvasElement>) {
-    if (!overLayRef.current || !drawingState.isDrawing) return {width: 0, height: 0};
+    if (!overLayRef.current || !drawingState.isDrawing)
+      return { width: 0, height: 0 };
 
     const width =
       event.clientX - overLayRef.current.offsetLeft - drawingState.x;
     const height =
       event.clientY - overLayRef.current.offsetTop - drawingState.y;
 
-      return {width, height};
+    return { width, height };
   }
   function onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
     if (!overLayRef.current) return;
@@ -39,11 +41,8 @@ const OverlayCanvas = ({
   }
   function onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
     if (!overLayRef.current || !drawingState.isDrawing) return;
-    // const width =
-    //   event.clientX - overLayRef.current.offsetLeft - drawingState.x;
-    // const height =
-    //   event.clientY - overLayRef.current.offsetTop - drawingState.y;
-    const {width,height} =calculateHeightWidth(event);
+    
+    const { width, height } = calculateHeightWidth(event);
     const canvas = overLayRef.current.getContext("2d");
     CanvasRenderService.clearFullCanvas(
       canvas!,
@@ -61,16 +60,25 @@ const OverlayCanvas = ({
   function onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
     if (!overLayRef.current || !drawingState.isDrawing) return;
 
-    const {height,width}=calculateHeightWidth(event);
+    const { height, width } = calculateHeightWidth(event);
     const canvas = overLayRef.current.getContext("2d");
     const dimensions: draw = {
-        x: drawingState.x,
-        y: drawingState.y,
-        width: width,
-        height: height,
-    }
+      x: drawingState.x,
+      y: drawingState.y,
+      width: width,
+      height: height,
+    };
     onDrawComplete(dimensions);
-    CanvasRenderService.clearFullCanvas(canvas!, overLayRef.current!.width, overLayRef.current!.height);
+    socket.emit("draw", {
+      shape: currentShape,
+      roomId: "myRoom1",
+      ...dimensions,
+    });
+    CanvasRenderService.clearFullCanvas(
+      canvas!,
+      overLayRef.current!.width,
+      overLayRef.current!.height
+    );
     setDrawingState({
       isDrawing: false,
       x: 0,

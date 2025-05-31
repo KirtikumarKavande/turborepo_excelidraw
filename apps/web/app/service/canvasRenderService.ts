@@ -6,7 +6,7 @@ class CanvasRenderService {
     config?: drawConfig
   ) {
     canvas.strokeStyle = (config && config.strokeColor) || "white";
-    canvas.lineWidth = (config && config.lineWidth )|| 1;
+    canvas.lineWidth = (config && config.lineWidth) || 1;
   }
 
   public static drawShape(
@@ -49,7 +49,8 @@ class CanvasRenderService {
   ) {
     const { x, y, width, height } = dimensions;
     canvas.beginPath();
-    canvas.arc(x, y, Math.abs(Math.max(height, width)) , 0, 2 * Math.PI);
+    const radius = Math.max(Math.abs(width), Math.abs(height));
+    canvas.arc(x, y, radius, 0, 2 * Math.PI);
     canvas.stroke();
   }
 }
