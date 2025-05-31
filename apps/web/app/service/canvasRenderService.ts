@@ -5,15 +5,15 @@ class CanvasRenderService {
     canvas: CanvasRenderingContext2D,
     config?: drawConfig
   ) {
-    canvas.strokeStyle = config!.strokeColor || "white";
-    canvas.lineWidth = config!.lineWidth || 1;
+    canvas.strokeStyle = (config && config.strokeColor) || "white";
+    canvas.lineWidth = (config && config.lineWidth )|| 1;
   }
 
-  public drawShape(
+  public static drawShape(
     shape: string,
     canvas: CanvasRenderingContext2D,
     dimensions: draw,
-    config: drawConfig
+    config?: drawConfig
   ) {
     CanvasRenderService.additionalConfig(canvas, config);
 
@@ -49,10 +49,9 @@ class CanvasRenderService {
   ) {
     const { x, y, width, height } = dimensions;
     canvas.beginPath();
-    canvas.arc(x, y, Math.max(height, width), 0, 2 * Math.PI);
+    canvas.arc(x, y, Math.abs(Math.max(height, width)) , 0, 2 * Math.PI);
     canvas.stroke();
   }
 }
 
-
-export default CanvasRenderService
+export default CanvasRenderService;

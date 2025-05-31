@@ -2,8 +2,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../components/css/canvasDraw.module.css";
 import { socket } from "../utility/socket";
-import { draw as drawType } from "@repo/ts-types/draw";
+import { draw, draw as drawType } from "@repo/ts-types/draw";
 import useWindowSize from "../hooks/useWindowSize";
+import OverlayCanvas from "./OverlayCanvas";
+import MainCanvas from "./MainCanvas";
+import { shapes } from "@repo/constants/shapes";
 
 const CanvasDraw = () => {
   const mainCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,6 +15,20 @@ const CanvasDraw = () => {
   const [draw, setDraw] = useState<any>([]);
   const windowSize = useWindowSize();
   const [selectedBtn, setSelectedBtn] = useState("");
+  const [dimensions, setDimensions] = useState<draw>({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  // new ------------------------------------------------------
+
+  const [currentShape, setCurrentShape] = useState(shapes.Rectangle);
+
+  function onDrawComplete(res: draw) {
+    setDimensions(res);
+  }
+
   useEffect(() => {
     const mainCanvas = mainCanvasRef.current;
     if (!mainCanvas) return;
@@ -110,7 +127,7 @@ const CanvasDraw = () => {
 
   return (
     <div>
-      <div id="mainCanvas" className={styles.mainCanvas}>
+      {/* <div id="mainCanvas" className={styles.mainCanvas}>
         <canvas
           ref={mainCanvasRef}
           width={windowSize.width}
@@ -123,16 +140,26 @@ const CanvasDraw = () => {
           width={windowSize.width}
           height={windowSize.height}
         ></canvas>
-      </div>
+      </div> */}
 
+      <OverlayCanvas
+        currentShape={currentShape}
+        onDrawComplete={onDrawComplete}
+      />
+      <MainCanvas dimensions={dimensions} currentShape={currentShape} />
       <div className={styles.btnList}>
         <button
           className={styles.drawBtn}
-          onClick={() => setSelectedBtn("circle")}
+          onClick={() => setCurrentShape(shapes.Circle)}
         >
           Circle
         </button>
-        <button className={styles.drawBtn}>Rectangle</button>
+        <button
+          onClick={() => setCurrentShape(shapes.Rectangle)}
+          className={styles.drawBtn}
+        >
+          Rectangle
+        </button>
       </div>
     </div>
   );

@@ -1,13 +1,12 @@
 import {shapes} from "@repo/constants/shapes"
 
-console.log(shapes.Rectangle)
 export type draw = {
-  shape: string;
+  shape?: string;
   x: number;
   y: number;
   height: number;
   width: number;
-  roomId: string;
+  roomId?: string;
 };
 
 export type drawConfig = {
