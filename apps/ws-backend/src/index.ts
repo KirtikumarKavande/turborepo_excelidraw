@@ -14,6 +14,9 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+app.use('/ping',(req,res)=>{
+  res.send('pong')
+})
 
 io.on("connection", (socket: Socket) => {
   console.log("A user connected");
