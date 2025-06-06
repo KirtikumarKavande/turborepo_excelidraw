@@ -23,6 +23,7 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("draw", (drawOnCanvas: draw) => {
+    if(!drawOnCanvas.roomId) return
     io.to(drawOnCanvas.roomId).emit("user-data", drawOnCanvas);
     console.log(drawOnCanvas);
   });
