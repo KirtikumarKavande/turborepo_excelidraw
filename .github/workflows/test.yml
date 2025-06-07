@@ -1,17 +1,36 @@
-name: Github action Demo
+name: Deploy Turborepo to EC2
+
 on:
   push:
     branches:
       - main
+
 jobs:
-  Explore-Github-Actions:
+  deploy:
+    name: CD to EC2 with PM2 Restart All
     runs-on: ubuntu-latest
+
     steps:
-      - name: Say Hello
-        run: echo "Hello World"
-      - name: See GitHub Actions
-        run: echo "${{ github.event_name }}"
-      - name: See GitHub Context
-        run: echo "${{ toJson(github) }}"
-      - name: See Job Status
-        run: echo "${{ job.status }}"
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy using Appleboy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/ubuntu/turborepo_excelidraw
+
+            echo "📦 Pulling latest code..."
+            git pull origin main
+
+            echo "📦 Installing dependencies..."
+            pnpm install
+
+            echo "🚀 Restarting all PM2 services..."
+            pm2 restart all
+
+            echo "✅ Deployment complete!"
