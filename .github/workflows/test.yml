@@ -1,0 +1,11 @@
+name: Github action Demo
+on:
+  push:
+    branches:
+      - main
+jobs:
+  Explore-Github-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say Hello
+        run: echo "Hello World"
