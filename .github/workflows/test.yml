@@ -13,3 +13,5 @@ jobs:
         run: echo "${{ github.event_name }}"
       - name: See GitHub Context
         run: echo "${{ toJson(github) }}"
+      - name: See Job Status
+        run: echo "${{ job.status }}"
