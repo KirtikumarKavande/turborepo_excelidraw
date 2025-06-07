@@ -7,30 +7,31 @@ on:
 
 jobs:
   deploy:
-    name: CD to EC2 with PM2 Restart All
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy using Appleboy
+      - name: SSH & Deploy via Appleboy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
+          debug: true
           script: |
+            set -e
             cd /home/ubuntu/turborepo_excelidraw
 
-            echo "📦 Pulling latest code..."
+            echo "✅ Git Pull..."
             git pull origin main
 
-            echo "📦 Installing dependencies..."
+            echo "📦 Installing deps..."
             pnpm install
 
-            echo "🚀 Restarting all PM2 services..."
+            echo "🔁 Restarting PM2..."
             pm2 restart all
 
-            echo "✅ Deployment complete!"
+            echo "🚀 Done"
