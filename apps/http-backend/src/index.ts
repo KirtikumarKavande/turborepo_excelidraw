@@ -79,6 +79,7 @@ app.post("/signin", async (req, res) => {
   }
 });
 
+
 app.post("/room", middleware, async(req, res) => {
   const {slug}=req.body
   console.log('name',req.body,req.userId)
@@ -95,5 +96,9 @@ const response=await prismaClient.room.create({
     roomId: response.id,
   });
 });
+
+app.get('/ping', (req, res) => {
+ res.send('pong') 
+})
 
 app.listen(3001);
