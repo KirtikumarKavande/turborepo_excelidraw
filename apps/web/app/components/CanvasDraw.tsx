@@ -8,7 +8,6 @@ import MainCanvas from "./MainCanvas";
 import { shapes } from "@repo/constants/shapes";
 
 const CanvasDraw = () => {
-  
   const [isClient, setIsClient] = useState(false);
   const [dimensions, setDimensions] = useState<drawType>({
     x: 0,
@@ -28,16 +27,12 @@ const CanvasDraw = () => {
     setIsClient(true);
   }, []);
 
-
-
   if (!isClient) {
     return <div>loading.....</div>;
   }
 
   return (
     <div>
-     
-
       <OverlayCanvas
         currentShape={currentShape}
         onDrawComplete={onDrawComplete}
@@ -55,6 +50,13 @@ const CanvasDraw = () => {
           className={styles.drawBtn}
         >
           Rectangle
+        </button>
+
+        <button
+          onClick={() => setCurrentShape(shapes.Pencil)}
+          className={styles.drawBtn}
+        >
+          Pencil
         </button>
       </div>
     </div>

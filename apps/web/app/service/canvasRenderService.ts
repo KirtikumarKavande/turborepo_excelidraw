@@ -1,6 +1,9 @@
 import { shapes } from "@repo/constants/shapes";
 import { draw, drawConfig } from "@repo/ts-types/draw";
 class CanvasRenderService {
+
+  private static paths:{x:number,y:number}[]=[]
+
   static additionalConfig(
     canvas: CanvasRenderingContext2D,
     config?: drawConfig
@@ -21,6 +24,7 @@ class CanvasRenderService {
       [shapes.Rectangle]: () =>
         CanvasRenderService.drawRectangle(canvas, dimensions),
       [shapes.Circle]: () => CanvasRenderService.drawCircle(canvas, dimensions),
+      [shapes.Pencil]: () => CanvasRenderService.drawPencil(canvas, dimensions),
     };
     if (shapesAvailable[shape]) {
       shapesAvailable[shape]();
@@ -52,6 +56,18 @@ class CanvasRenderService {
     const radius = Math.max(Math.abs(width), Math.abs(height));
     canvas.arc(x, y, radius, 0, 2 * Math.PI);
     canvas.stroke();
+  }
+
+  private static drawPencil(
+    canvas: CanvasRenderingContext2D,
+    dimensions: draw
+  ) {
+    const { x, y } = dimensions;
+    CanvasRenderService.paths.push({ x, y });
+    canvas!.lineTo(x, y);
+    canvas!.stroke();
+
+    console.log("paths", CanvasRenderService.paths);
   }
 }
 

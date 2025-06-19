@@ -30,7 +30,7 @@ const MainCanvas = ({
     });
   }, []);
 
-  return <Canvas className={styles.mainCanvas} ref={mainCanvasRef}></Canvas>;
+  return <Canvas className={styles.mainCanvas} ref={mainCanvasRef}  ></Canvas>;
 };
 
 export default MainCanvas;
