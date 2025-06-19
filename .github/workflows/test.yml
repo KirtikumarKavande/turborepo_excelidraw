@@ -1,4 +1,5 @@
 name: Deploy Turborepo to EC2
+
 on:
   push:
     branches:
@@ -7,67 +8,31 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy Step 1 - Update Code
+      - name: SSH & Deploy via Appleboy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.AWS_EC2_HOST }}
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.AWS_EC2_SSH_KEY }}
           port: 22
-          timeout: 60s
+          debug: true
           script: |
             set -e
             cd /home/ubuntu/turborepo_excelidraw
+
             echo "✅ Git Pull..."
-            git pull origin main
+            git pull origin main || echo "Git pull failed"
 
-      - name: Deploy Step 2 - Install Dependencies
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.AWS_EC2_HOST }}
-          username: ${{ secrets.AWS_EC2_USER }}
-          key: ${{ secrets.AWS_EC2_SSH_KEY }}
-          port: 22
-          timeout: 600s
-          command_timeout: 600s
-          script: |
-            set -e
-            cd /home/ubuntu/turborepo_excelidraw
+
             echo "📦 Installing deps..."
-            # Use CI flag and skip optional deps for faster install
-            pnpm install --frozen-lockfile --prefer-offline
+            pnpm install
 
-      - name: Deploy Step 3 - Build Project
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.AWS_EC2_HOST }}
-          username: ${{ secrets.AWS_EC2_USER }}
-          key: ${{ secrets.AWS_EC2_SSH_KEY }}
-          port: 22
-          timeout: 300s
-          script: |
-            set -e
-            cd /home/ubuntu/turborepo_excelidraw
-            echo "🔨 Building project..."
-            pnpm build
+            echo "🔁 Restarting PM2....."
+            pm2 restart all
 
-      - name: Deploy Step 4 - Restart Services
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.AWS_EC2_HOST }}
-          username: ${{ secrets.AWS_EC2_USER }}
-          key: ${{ secrets.AWS_EC2_SSH_KEY }}
-          port: 22
-          timeout: 60s
-          script: |
-            set -e
-            cd /home/ubuntu/turborepo_excelidraw
-            echo "🔁 Restarting PM2..."
-            pm2 reload all --update-env
-            echo "📊 PM2 Status:"
-            pm2 list
             echo "🚀 Done"
