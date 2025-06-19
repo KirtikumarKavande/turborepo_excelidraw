@@ -31,7 +31,7 @@ jobs:
             echo "📦 Installing deps..."
             pnpm install
 
-            echo "🔁 Restarting PM2..."
+            echo "🔁 Restarting PM2....."
             pm2 restart all
 
             echo "🚀 Done"
